@@ -55,3 +55,19 @@ $(".list-group").on("blur", "textarea", function() {
 var dayDisplay = document.querySelector("#currentDay");
 var getDate = new Date();
 dayDisplay.innerText = "Today is " + getDate;
+
+$(".text-area").html("Edit me");
+$(".text-area").on("click", function(){
+    console.log("text clicked");
+    var text = $(this)
+    .text()
+    .trim()
+    
+
+  // replace p element with a new textarea
+  var textInput = $("<textarea>").val(text);
+  $(this).replaceWith(textInput);
+
+  // auto focus new element
+  textInput.trigger("focus");
+});
