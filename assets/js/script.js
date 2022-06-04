@@ -11,47 +11,8 @@ WHEN I click the save button for that time block
 THEN the text for that event is saved in local storage
 WHEN I refresh the page
 THEN the saved events persist*/
-/*// task text was clicked
-$(".list-group").on("click", "p", function() {
-  // get current text of p element
-  var text = $(this)
-    .text()
-    .trim();
-
-  // replace p element with a new textarea
-  var textInput = $("<textarea>").addClass("form-control").val(text);
-  $(this).replaceWith(textInput);
-
-  // auto focus new element
-  textInput.trigger("focus");
-});
-
-// editable field was un-focused
-$(".list-group").on("blur", "textarea", function() {
-  // get current value of textarea
-  var text = $(this).val();
-
-  // get status type and position in the list
-  var status = $(this)
-    .closest(".list-group")
-    .attr("id")
-    .replace("list-", "");
-  var index = $(this)
-    .closest(".list-group-item")
-    .index();
-
-  // update task in array and re-save to localstorage
-  tasks[status][index].text = text;
-  saveTasks();
-
-  // recreate p element
-  var taskP = $("<p>")
-    .addClass("m-1")
-    .text(text);
-
-  // replace textarea with new content
-  $(this).replaceWith(taskP);
-});*/
+var textInput = {};
+var time = moment().hours();
 var dayDisplay = document.querySelector("#currentDay");
 var getDate = new Date();
 dayDisplay.innerText = "Today is " + getDate;
@@ -64,10 +25,32 @@ $(".text-area").on("click", function(){
     .trim()
     
 
-  // replace p element with a new textarea
-  var textInput = $("<textarea>").val(text);
+  
+  var textInput = $("<textarea>").val(text).addClass("w-50");
   $(this).replaceWith(textInput);
 
-  // auto focus new element
+  
   textInput.trigger("focus");
 });
+$(".m-1").on( "click", function(event) {
+    $(event.delegateTarget).addClass("past");
+  });
+$(".saveBtn").on("click", function(textInput){
+    localStorage.setItem("text", JSON.stringify(textInput));
+    console.log(textInput)
+});
+
+  
+console.log("hours is: ",time); 
+
+
+//how to save each seperate timeblock to localstorage w/ click of save button
+        //ONCLICK Savebutton TARGETS its corrisponding TEXT and SAVES it to localstorage
+//how to write localstorage data to it's corrisponding timeblock on page reload
+        //On page LOAD unique identifiers are TARGETED and PASSED to the appropriate timeblocks
+//how to dynamically color-code timeblocks as time passes
+        //IF <timeblock> < currentTime ADD .past
+        //IF <timeblock> = currentTime ADD .present
+        //IF <timeblock> > currentTime ADD .future
+
+//could I save each timeblock-text into a whole array item for ease of access?
