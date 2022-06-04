@@ -22,7 +22,7 @@ $(".text-area").on("click", function(){
     var text = $(this)
     .text()
     .trim()
-  var textInput = $("<textarea>").val(text).addClass("w-50");
+  var textInput = $("<textarea>").val(text).addClass("w-75");
   $(this).replaceWith(textInput);
   textInput.trigger("focus");
 });
