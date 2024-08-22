@@ -29,8 +29,67 @@
       <p class="lead">A simple calendar app for scheduling your work day</p>
       <p id="currentDay" class="lead"></p>
     </header>
-    <div class="container col d-flex flex-column">
-      <div id="8" class="m-1 border-top border-bottom border-dark">
+    <form>
+      <label for="lower-time">Choose your start time:</label>
+      <select name="lower-time" id="lower-time">
+        <option value="0">12AM(midnight)</option>
+        <option value="1">1AM</option>
+        <option value="2">2AM</option>
+        <option value="3">3AM</option>
+        <option value="4">4AM</option>
+        <option value="5">5AM</option>
+        <option value="6">6AM</option>
+        <option value="7">7AM</option>
+        <option value="8">8AM</option>
+        <option value="9">9AM</option>
+        <option value="10">10AM</option>
+        <option value="11">11AM</option>
+        <option value="12">12PM(noon)</option>
+        <option value="13">1PM</option>
+        <option value="14">2PM</option>
+        <option value="15">3PM</option>
+        <option value="16">4PM</option>
+        <option value="17">5PM</option>
+        <option value="18">6PM</option>
+        <option value="19">7PM</option>
+        <option value="20">8PM</option>
+        <option value="21">9PM</option>
+        <option value="22">10PM</option>
+        <option value="23">11PM</option>
+      </select> 
+
+      <label for="upper-time">Choose your end time:</label>
+      <select name="upper-time" id="upper-time">
+        <option value="0">12AM(midnight)</option>
+        <option value="1">1AM</option>
+        <option value="2">2AM</option>
+        <option value="3">3AM</option>
+        <option value="4">4AM</option>
+        <option value="5">5AM</option>
+        <option value="6">6AM</option>
+        <option value="7">7AM</option>
+        <option value="8">8AM</option>
+        <option value="9">9AM</option>
+        <option value="10">10AM</option>
+        <option value="11">11AM</option>
+        <option value="12">12PM(noon)</option>
+        <option value="13">1PM</option>
+        <option value="14">2PM</option>
+        <option value="15">3PM</option>
+        <option value="16">4PM</option>
+        <option value="17">5PM</option>
+        <option value="18">6PM</option>
+        <option value="19">7PM</option>
+        <option value="20">8PM</option>
+        <option value="21">9PM</option>
+        <option value="22">10PM</option>
+        <option value="23">11PM</option>
+      </select> 
+
+      <input type="submit" value="Submit" id="time-submit"/>
+    </form>
+    <div class="time-container col d-flex flex-column">
+      <!--<div id="8" class="m-1 border-top border-bottom border-dark">
         8AM 
         <textarea class="text-area text-center w-75"></textarea>
         <button class="float-right saveBtn oi oi-file"></button>
@@ -79,7 +138,7 @@
         5PM 
         <textarea class="text-area text-center w-75"></textarea>
         <button class="float-right saveBtn oi oi-file"></button>
-      </div>
+      </div>-->
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
