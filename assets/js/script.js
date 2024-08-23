@@ -5,16 +5,22 @@ dayDisplay.innerText = `Today is ${getDate}.`;
 let timeContainer = document.querySelector(".time-container");
 let lowerTime = Number($("#lower-time").val());
 let upperTime = Number($("#upper-time").val());
+let testLower = document.querySelector("#lower-time");
+let testUpper = document.querySelector("#upper-time");
 
 $("#time-submit").on("click", function(event){
         event.preventDefault();
         let workdayTimes = [];
         let genLowerTime = lowerTime;
         let genUpperTime = upperTime;
-        console.log(lowerTime, upperTime);
+        console.log('test', testLower, testUpper); /*Have to test if there are any differences between selecting via document.querySelector
+        and $("#"), but I did discover here that we can access saved nodes text through selectedOptions property in devtools.*/
+        console.log($("#lower-time"), $("#upper-time")); 
+        console.log(genLowerTime, genUpperTime);
         
-        while(genLowerTime < genUpperTime){
-                workdayTimes.push(genLowerTime);
+        while(genLowerTime < genUpperTime){ //these are a referrence to value(can see in html), wont be able to compair so neatly
+                workdayTimes.push(genLowerTime); /*I think we have to push an object, so we can articulate
+                from multiple pieces of data*/
                 genLowerTime++;
         };
         workdayTimes.push(genUpperTime);
@@ -36,9 +42,6 @@ $("#time-submit").on("click", function(event){
         colorCode(lowerTime, upperTime);
 });
 
-//Current issue with colorCode: it isn't color coding the dynamically generated time-blocks. The
-//issue is similar to a scoping issue I solved above; needed to move the .createElement variables
-//into the .forEach scope.
 let colorCode = function(start, stop){
         console.log("out of scope", start, stop);
         for(let i = start; i <= stop; i++){    
@@ -75,13 +78,13 @@ $(".text-area").on("click", function(){
         textInput.trigger("focus");
 });
 
-$(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
+// $(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
 
-function saveLocal(event){
-    let textValue = $(event.target).siblings()[0].value    //lines 31-36 determine what is saved to localstorage, with timeKey being the timeblock and textValue being the textarea's content
-    let timeKey = $(event.target).parent()[0].id
-    localStorage.setItem(timeKey, textValue);
-};
+// function saveLocal(event){
+//     let textValue = $(event.target).siblings()[0].value    //lines 31-36 determine what is saved to localstorage, with timeKey being the timeblock and textValue being the textarea's content
+//     let timeKey = $(event.target).parent()[0].id
+//     localStorage.setItem(timeKey, textValue);
+// };
 
 // function renderStorage(){
 
@@ -96,6 +99,16 @@ function saveLocal(event){
 
 /*TODO:
 Add ability for user to select/edit the time-frame to be displayed as their workday
+        -add functionality which appends AM/PM as appropriate
+        -if user selects different time-block, need to override previous
+        -need to test if we can save the state of the app, rather than individual time-blocks(if
+        user selects a time-frame, page should load with that time-frame. if user enters text into
+        time-blocks app should load those saved time-blocks)
+        -time-blocks after 12(PM or AM) encountering unintended behavior; need a way to distinguish
+        from eachother so appropriate, user-specified times are pushed and generated
+
+Make time-related color coding dependent on a setInterval function of 10-15min, so the color of 
+various tasks are updated as appropriate every 1/6 to 1/3 of an hour
 
 Make textarea more visible/intuitive to interact with and add tasks to
         -Make previously saved text remain visible upon user clicking textarea containing it
