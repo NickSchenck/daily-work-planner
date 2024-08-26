@@ -5,47 +5,61 @@ dayDisplay.innerText = `Today is ${getDate}.`;
 let timeContainer = document.querySelector(".time-container");
 let lowerTime = Number($("#lower-time").val());
 let upperTime = Number($("#upper-time").val());
-let testLower = document.querySelector("#lower-time");
-let testUpper = document.querySelector("#upper-time");
+let timeArr = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
 
 $("#time-submit").on("click", function(event){
+        console.log(time);
         event.preventDefault();
-        let workdayTimes = [];
-        let genLowerTime = lowerTime;
-        let genUpperTime = upperTime;
-        console.log('test', testLower, testUpper); /*Have to test if there are any differences between selecting via document.querySelector
-        and $("#"), but I did discover here that we can access saved nodes text through selectedOptions property in devtools.*/
-        console.log($("#lower-time"), $("#upper-time")); 
-        console.log(genLowerTime, genUpperTime);
-        
-        while(genLowerTime < genUpperTime){ //these are a referrence to value(can see in html), wont be able to compair so neatly
-                workdayTimes.push(genLowerTime); /*I think we have to push an object, so we can articulate
-                from multiple pieces of data*/
-                genLowerTime++;
-        };
-        workdayTimes.push(genUpperTime);
-        console.log(workdayTimes);
+        let positionLower;
+        let positionUpper;
+        let portionArr = [];
+        let lowerText = document.querySelector("#lower-time").selectedOptions[0].innerText;
+        let upperText = document.querySelector("#upper-time").selectedOptions[0].innerText;
+        for(let i = 0; i < timeArr.length; i++){
 
-        workdayTimes.forEach((time) =>{
+                if(lowerText === timeArr[i]){
+                        positionLower = i;
+                        console.log('lower', positionLower);
+                };
+
+                if(upperText === timeArr[i]){
+                        positionUpper = i;
+                        console.log('upper', positionUpper);
+                };
+        };
+        /*Going to need a conditional here which tests if start > end(AM-AM works, AM to PM works, PM to PM works, now just need PM to
+        AM)*/
+        if(positionLower > positionUpper){
+                let lowerPortionArr = timeArr.slice(positionLower, 24);
+                let upperPortionArr = timeArr.slice(0, (positionUpper + 1));
+                portionArr = lowerPortionArr.concat(upperPortionArr);
+                
+        }else{
+                portionArr = timeArr.slice(positionLower, (positionUpper + 1));
+        };
+        console.log(portionArr);
+        portionArr.forEach((portion) =>{
                 let div = document.createElement("div");
                 let textarea = document.createElement("textarea");
                 let button = document.createElement("button");
-                div.textContent = time;
+                div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
-                div.id = time;
+                div.id = lowerTime - 1;
+                // console.log(`id`, div.id);
+                lowerTime++;
                 timeContainer.append(div);
                 div.append(textarea);
                 textarea.classList.add("text-area", "text-center", "w-75");
                 div.append(button);
                 button.classList.add("float-right", "saveBtn", "oi", "oi-file");
         });
-        colorCode(lowerTime, upperTime);
+        colorCode(positionLower, positionUpper);
 });
 
 let colorCode = function(start, stop){
-        console.log("out of scope", start, stop);
+        // console.log("out of scope", start, stop);
         for(let i = start; i <= stop; i++){    
-                console.log('inside scope', start, stop);  
+                // console.log('inside scope', start, stop);  
                           //lines 6-17 act as a function which color-codes our timeblocks as time passes in the day
                 if(i < time){
                         $("#" + i).addClass("past");
@@ -99,13 +113,15 @@ $(".text-area").on("click", function(){
 
 /*TODO:
 Add ability for user to select/edit the time-frame to be displayed as their workday
-        -add functionality which appends AM/PM as appropriate
+        -generation should occur whether user --starts in AM/ends in AM--, --starts in AM/ends in PM--, --starts in PM/ends in PM--, or
+        starts in PM/ends in AM.
         -if user selects different time-block, need to override previous
         -need to test if we can save the state of the app, rather than individual time-blocks(if
         user selects a time-frame, page should load with that time-frame. if user enters text into
         time-blocks app should load those saved time-blocks)
         -time-blocks after 12(PM or AM) encountering unintended behavior; need a way to distinguish
         from eachother so appropriate, user-specified times are pushed and generated
+
 
 Make time-related color coding dependent on a setInterval function of 10-15min, so the color of 
 various tasks are updated as appropriate every 1/6 to 1/3 of an hour
