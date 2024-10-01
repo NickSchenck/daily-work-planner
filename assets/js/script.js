@@ -1,4 +1,5 @@
 let time = moment().hours();
+// let time = 23;
 let timeTest = moment().date();
 let dayDisplay = document.querySelector("#currentDay"); 
 let getDate = new Date();
@@ -56,6 +57,10 @@ $("#time-submit").on("click", function(event){
                 div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
                 div.id = lowerTime - 1;
+                //added this if to test what happens and illuminate what may be good avenues of changing current code
+                // if(div.id > 23){
+                //         div.id = div.id - 24;
+                // };
 
                 let timeBlockObj = {
                         id: div.id,
@@ -86,7 +91,9 @@ let colorCode = function(start, stop, workdayArr){
         /*Working great! Iterates the date property of the timeBlockObj's contained in workdayArr when the id is greater than 23. So
         we'll check if the date property is different between two workdayArr entries. If it is, we will take the id property of each
         entry with a higher date, and subtract 23 from it. We'll also need to make our color coding, for PM to AM shifts specifically,
-        account for, react to, and correctly color code time-blocks based off the date property of the workdayArr entries.*/
+        account for, react to, and correctly color code time-blocks based off the date property of the workdayArr entries.
+        
+        */
         for(let i = 0; i < workdayArr.length; i++){
 
                 if(workdayArr[i].id > 23){
@@ -96,12 +103,14 @@ let colorCode = function(start, stop, workdayArr){
 
         if(start < stop){
 
-                for(let i = start; i <= stop; i++){    
+                for(let i = start; i <= stop; i++){
 
                         if(i < time){
                                 $("#" + i).addClass("past");
+
                         }else if(i === time){
                                 $("#" + i).addClass("present");
+
                         }else if(i > time){
                                 $("#" + i).addClass("future");
                         };
@@ -115,25 +124,102 @@ let colorCode = function(start, stop, workdayArr){
                         below is what targets PM to AM shifts.
                 */
         }else if(start > stop){
-                for(let i = 0; i < workdayArr.length; i++){
-                        if(workdayArr[0].date < workdayArr[i].date){
-                                workdayArr[i].id = workdayArr[i].id - 23
-                        }
-                };
-                for(let i = start; i <= idNum; i++){
 
+                // for(let i = 0; i < workdayArr.length; i++){
+                        
+                //         if(workdayArr[0].date < workdayArr[i].date){
+                //                 workdayArr[i].id = workdayArr[i].id - 24;
+                //         };
+                // };
+
+                for(let i = start; i <= idNum; i++){
+                        console.log(`inside forloop`, i)
+                        let internalTime = time;
                         /*These will need to be editted, if left as is color coding on PM to AM shift still only depends on the number
-                        value of the time-blocks id properties. It will also need to account for a time-blocks date property.*/
-                        if(i < time){
+                        value of the time-blocks id properties. It will also need to account for a time-blocks date property.
+                        
+                        current issue being worked on; we need a way to distinguish a PM to AM shift as having taken place between two
+                        days
+                        current problem; we've been determining color coding based off the relation a time-block cell's id(in the DOM)
+                        has to the time variable. So we can have id's of 24, 25, 26+ but the time variable will only EVER reach 23. This
+                        will cause any time-block cells above 23 to ALWAYS trigger the last else if that gives them a class of 'future'.
+                        We'll have to change the above for loop, as it starts us at start(which will be greater than stop in a PM to AM
+                        shift) and iterates us to the highest id the user-selected time-block reaches.
+                        We're going to have to affect how we iterate the date property in workdayArr(current method is based on changing
+                        date property when id is above 23), or we're going to have to change how/why a time-block is selected for color
+                        coding(current method is selecting via i's relation to time, and $("#" + i), which is the id a time-block has)*/
+                        // for(let j = 0; j < workdayArr.length; j++){
+
+                                
+                        // }
+                        if(i > 23){
+                                internalTime = internalTime + 1;
+                        };
+                        console.log(`time`, time)
+                        console.log(`internaltime`,internalTime)
+                        if(i < internalTime){
                                 $("#" + i).addClass("past");
-                        }else if(i === time){
+
+                        }else if(i === internalTime){
                                 $("#" + i).addClass("present");
-                        }else if(i > time){
+
+                        }else if(i > internalTime){
                                 $("#" + i).addClass("future");
                         };
+                        
                 }
                 console.log(`inside PM2AM`,workdayArr);
         }//last possible case would be --if(start === stop)--, unsure how needed this is and making a note of it here/now.
+        // for(let i = 0; i < workdayArr.length; i++){
+
+        //         if(workdayArr[i].id > 23){
+        //                 workdayArr[i].date++;
+        //         }
+        // }
+
+        // if(start < stop){
+
+        //         for(let i = start; i <= stop; i++){
+
+        //                 if(i < time){
+        //                         $("#" + i).addClass("past");
+        //                 }else if(i === time){
+        //                         $("#" + i).addClass("present");
+        //                 }else if(i > time){
+        //                         $("#" + i).addClass("future");
+        //                 };
+        //         };
+        //         /*
+        //         for(let i = 0; i < workdayArr.length; i++){
+        //                 if(workdayArr[0].date < workdayArr[i].date){
+        //                         workdayArr[i].id = workdayArr[i].id - 23
+        //                 }
+        //         }
+        //                 below is what targets PM to AM shifts.
+        //         */
+        // }else if(start > stop){
+
+        //         for(let i = 0; i < workdayArr.length; i++){
+                        
+        //                 if(workdayArr[0].date < workdayArr[i].date){
+        //                         workdayArr[i].id = workdayArr[i].id - 23;
+        //                 };
+        //         };
+
+        //         for(let i = start; i <= idNum; i++){
+
+        //                 /*These will need to be editted, if left as is color coding on PM to AM shift still only depends on the number
+        //                 value of the time-blocks id properties. It will also need to account for a time-blocks date property.*/
+        //                 if(i < time){
+        //                         $("#" + i).addClass("past");
+        //                 }else if(i === time){
+        //                         $("#" + i).addClass("present");
+        //                 }else if(i > time){
+        //                         $("#" + i).addClass("future");
+        //                 };
+        //         }
+        //         console.log(`inside PM2AM`,workdayArr);
+        // }
 };
 
 $(".text-area").on("click", function(){
