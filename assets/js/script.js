@@ -1,6 +1,6 @@
 let time = moment().hours();
-// let time = 23;
-let timeTest = moment().date();
+// let time = 0;
+let currentDate = moment().date();
 let dayDisplay = document.querySelector("#currentDay"); 
 let getDate = new Date();
 dayDisplay.innerText = `Today is ${getDate}.`;
@@ -26,22 +26,15 @@ $("#time-submit").on("click", function(event){
 
                 if(lowerText === timeArr[i]){
                         positionLower = i;
-                        console.log('lower', positionLower);
+                        // console.log('lower', positionLower);
                 };
 
                 if(upperText === timeArr[i]){
                         positionUpper = i;
-                        console.log('upper', positionUpper);
+                        // console.log('upper', positionUpper);
                 };
         };
-        /*Everything generates pretty neatly at the moment. Still having problems with PM-to-AM generation, and I believe its because
-        of the transition to a new day. Generation of the fields still happens in PM-to-AM, but the color coding is absent. The current
-        way which the elements are color coded is by compairison to the time variable. time represents itself as a number relating to
-        the days actual time, then we compair the id of our elements to that number in the colorCode function. This explains why we're
-        seeing issues with PM-to-AM, as there are no 25th, 26th, etc. hours to a day; we'll either need some sort of date compairison to
-        pair with the hour compairison, some way to accurately manipulate the values of the time variable and the numbers generated as
-        id's to match-up with the hours they represent, or some sort of reformatting of the current mostly-working code to get the
-        functionality we want. We will need a different empty array for pushing objects to, then will need to read from that array*/
+
         if(positionLower > positionUpper){
                 let lowerPortionArr = timeArr.slice(positionLower, 24);
                 let upperPortionArr = timeArr.slice(0, (positionUpper + 1));
@@ -49,7 +42,7 @@ $("#time-submit").on("click", function(event){
         }else{
                 portionArr = timeArr.slice(positionLower, (positionUpper + 1));
         };
-        console.log(portionArr); //console.logging the array which times(1AM, 8PM etc) are pushed to
+        // console.log(portionArr); 
         portionArr.forEach((portion) =>{
                 let div = document.createElement("div");
                 let textarea = document.createElement("textarea");
@@ -57,14 +50,14 @@ $("#time-submit").on("click", function(event){
                 div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
                 div.id = lowerTime - 1;
-                //added this if to test what happens and illuminate what may be good avenues of changing current code
-                // if(div.id > 23){
-                //         div.id = div.id - 24;
-                // };
+
+                if(div.id > 23){
+                        div.id = div.id - 24;
+                }
 
                 let timeBlockObj = {
                         id: div.id,
-                        date: timeTest,
+                        date: currentDate,
                         timeBlock: portion
                 };
                 idNum = div.id;
@@ -81,23 +74,19 @@ $("#time-submit").on("click", function(event){
         console.log(`timeBlockObj`, timeBlockArr);
 });
 
-/*Reason that colorCode currently doesn't properly color code the PM-to-AM time-blocks is because start(or i) will be greater than stop
-upon initialization of the function. Therefore, --i <= stop-- never happens*/
 let colorCode = function(start, stop, workdayArr){
         console.log($('.time-container'));
         console.log("colorCode", start, stop);
         console.log(`idNum`,idNum)
 
-        /*Working great! Iterates the date property of the timeBlockObj's contained in workdayArr when the id is greater than 23. So
-        we'll check if the date property is different between two workdayArr entries. If it is, we will take the id property of each
-        entry with a higher date, and subtract 23 from it. We'll also need to make our color coding, for PM to AM shifts specifically,
-        account for, react to, and correctly color code time-blocks based off the date property of the workdayArr entries.
-        
-        */
         for(let i = 0; i < workdayArr.length; i++){
 
                 if(workdayArr[i].id > 23){
                         workdayArr[i].date++;
+                }
+
+                if(workdayArr[i].id > 23){
+                        workdayArr[i].id = workdayArr[i].id - 24;
                 }
         }
 
@@ -123,6 +112,24 @@ let colorCode = function(start, stop, workdayArr){
                 }
                         below is what targets PM to AM shifts.
                 */
+
+                        /*
+                        
+                        If we want to continue using id to color code the time-blocks in real time(and this IS a GREAT way to accomplish
+                        this), we CANNOT ALLOW the i declaration in the below else if get higher than 23(or we have to figure out how to
+                        coerce the time variable to appropriately match-up with the time-block, which is harder, will require more code,
+                        and probably be more error prone). THIS IS THE FUNDAMENTAL ISSUE, TRYING TO SOLVE THIS PROBLEM W/O ADDRESSING
+                        THIS WILL ONLY HAVE YOU SPINNING YOUR TIRES IN THE MUD.
+                        
+                        id's are now not being allowed above 23, and date properties are now being correctly iterated where needed.
+                        FOCUS ON WHAT NEEDS TO CHANGE IN THE for loop.
+                        
+                        For loop and id generation is looking much better, but there are still fundamental issues with the loop. We're
+                        compairing against workdayArr.length right now, which means that, generally, it won't reach values near or
+                        greater than 20. This will prevent time-blocks with id's equal to those numbers from being color coded.
+                        
+                        Currently thinking we may need to be more general, in that we may need to compair against the number 23, thus
+                        generating a whole day. Then we might be able to be more selective in how/where color coding is applied.*/
         }else if(start > stop){
 
                 // for(let i = 0; i < workdayArr.length; i++){
@@ -132,38 +139,25 @@ let colorCode = function(start, stop, workdayArr){
                 //         };
                 // };
 
-                for(let i = start; i <= idNum; i++){
+                for(let i = 0; i < workdayArr.length; i++){
                         console.log(`inside forloop`, i)
-                        let internalTime = time;
-                        /*These will need to be editted, if left as is color coding on PM to AM shift still only depends on the number
-                        value of the time-blocks id properties. It will also need to account for a time-blocks date property.
                         
-                        current issue being worked on; we need a way to distinguish a PM to AM shift as having taken place between two
-                        days
-                        current problem; we've been determining color coding based off the relation a time-block cell's id(in the DOM)
-                        has to the time variable. So we can have id's of 24, 25, 26+ but the time variable will only EVER reach 23. This
-                        will cause any time-block cells above 23 to ALWAYS trigger the last else if that gives them a class of 'future'.
-                        We'll have to change the above for loop, as it starts us at start(which will be greater than stop in a PM to AM
-                        shift) and iterates us to the highest id the user-selected time-block reaches.
-                        We're going to have to affect how we iterate the date property in workdayArr(current method is based on changing
-                        date property when id is above 23), or we're going to have to change how/why a time-block is selected for color
-                        coding(current method is selecting via i's relation to time, and $("#" + i), which is the id a time-block has)*/
                         // for(let j = 0; j < workdayArr.length; j++){
 
                                 
                         // }
-                        if(i > 23){
-                                internalTime = internalTime + 1;
-                        };
+                        
                         console.log(`time`, time)
-                        console.log(`internaltime`,internalTime)
-                        if(i < internalTime){
+                        if(i < time){
+                                /*!!!!!!!!!!!!!!!!!!!!!!!!!!!Here we are selecting the item to addClass to. If the app cannot select the
+                                appropriate time-block, it will not add correct color coding.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                (maybe fixed by above idea, maybe not. We'll soon see)*/
                                 $("#" + i).addClass("past");
 
-                        }else if(i === internalTime){
+                        }else if(i === time){
                                 $("#" + i).addClass("present");
 
-                        }else if(i > internalTime){
+                        }else if(i > time){
                                 $("#" + i).addClass("future");
                         };
                         
