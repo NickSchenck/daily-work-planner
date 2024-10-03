@@ -47,17 +47,19 @@ $("#time-submit").on("click", function(event){
                 let div = document.createElement("div");
                 let textarea = document.createElement("textarea");
                 let button = document.createElement("button");
+                let dateProp = currentDate;
                 div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
                 div.id = lowerTime - 1;
-
+                
                 if(div.id > 23){
                         div.id = div.id - 24;
+                        dateProp++;
                 }
 
                 let timeBlockObj = {
                         id: div.id,
-                        date: currentDate,
+                        date: dateProp,
                         timeBlock: portion
                 };
                 idNum = div.id;
@@ -79,16 +81,16 @@ let colorCode = function(start, stop, workdayArr){
         console.log("colorCode", start, stop);
         console.log(`idNum`,idNum)
 
-        for(let i = 0; i < workdayArr.length; i++){
+        // for(let i = 0; i < workdayArr.length; i++){
 
-                if(workdayArr[i].id > 23){
-                        workdayArr[i].date++;
-                }
+        //         if(workdayArr[i].id > 23){
+        //                 workdayArr[i].date++;
+        //         }
 
-                if(workdayArr[i].id > 23){
-                        workdayArr[i].id = workdayArr[i].id - 24;
-                }
-        }
+        //         if(workdayArr[i].id > 23){
+        //                 workdayArr[i].id = workdayArr[i].id - 24;
+        //         }
+        // }
 
         if(start < stop){
 
@@ -126,12 +128,13 @@ let colorCode = function(start, stop, workdayArr){
                         
                         For loop and id generation is looking much better, but there are still fundamental issues with the loop. We're
                         compairing against workdayArr.length right now, which means that, generally, it won't reach values near or
-                        greater than 20. This will prevent time-blocks with id's equal to those numbers from being color coded.
+                        greater than 20(unless the user specified shift has that many hours in it). This will prevent time-blocks with
+                        id's equal to those numbers from being color coded.
                         
                         Currently thinking we may need to be more general, in that we may need to compair against the number 23, thus
                         generating a whole day. Then we might be able to be more selective in how/where color coding is applied.*/
         }else if(start > stop){
-
+                console.log(`inside startstop`, currentDate);
                 // for(let i = 0; i < workdayArr.length; i++){
                         
                 //         if(workdayArr[0].date < workdayArr[i].date){
@@ -139,33 +142,29 @@ let colorCode = function(start, stop, workdayArr){
                 //         };
                 // };
 
-                for(let i = 0; i < workdayArr.length; i++){
-                        console.log(`inside forloop`, i)
+                for(let i = 0; i <= 23; i++){
                         
-                        // for(let j = 0; j < workdayArr.length; j++){
-
-                                
-                        // }
-                        
-                        console.log(`time`, time)
+                        /*Below is checking all the entries of workdayArr, each time. It's why making another loop based off
+                        workdayArr.length and including compairisons in the if statements such as workdayArr[j].date <= currentDate
+                        didn't work */
                         if(i < time){
                                 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!Here we are selecting the item to addClass to. If the app cannot select the
                                 appropriate time-block, it will not add correct color coding.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 (maybe fixed by above idea, maybe not. We'll soon see)*/
                                 $("#" + i).addClass("past");
-
+        
                         }else if(i === time){
                                 $("#" + i).addClass("present");
-
+        
                         }else if(i > time){
                                 $("#" + i).addClass("future");
                         };
-                        
                 }
                 console.log(`inside PM2AM`,workdayArr);
         }//last possible case would be --if(start === stop)--, unsure how needed this is and making a note of it here/now.
         // for(let i = 0; i < workdayArr.length; i++){
 
+        
         //         if(workdayArr[i].id > 23){
         //                 workdayArr[i].date++;
         //         }
