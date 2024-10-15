@@ -1,5 +1,5 @@
-let time = moment().hours();
-// let time = 23;
+// let time = moment().hours();
+let time = 23;
 let currentDate = moment().date();
 let dayDisplay = document.querySelector("#currentDay"); 
 let getDate = new Date();
@@ -50,6 +50,8 @@ $("#time-submit").on("click", function(event){
                 let dateProp = currentDate;
                 div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
+                //Might look here if we do some editting, could assign past, pres, future classes directly to the divs, rather than a
+                //object array
                 div.id = lowerTime - 1;
                 
                 
@@ -150,38 +152,62 @@ let colorCode = function(start, stop, workdayArr){
                 // };
                 // for(let j = 0; j < workdayArr.length; j++){
                               
-                /*The closest this has been to working is a near copy of (start < stop).*/
-                for(let i = 0; i <= 23; i++){
-                        // console.log($("#" + i)[0].title)
-
-                        if(i < time){
-                                $("#" + i).addClass("past");
-
-                        }else if(i === time){
-                                $("#" + i).addClass("present");
-
-                        }else if(i > time){
-                                $("#" + i).addClass("future");
-                        };
-                };
-
-                // }
+                /*i = stop; i <= start(or its inverse) doesn't work because there'll be numbers that are never reached; e.g. stop = 4(4AM)
+                and start = 20(8PM) would never reach 21, 22, 23(9PM, 10PM, 11PM) and/or 0, 1, 2, 3(12AM, 1AM, 2AM, 3AM).
                 
-                // workdayArr.forEach((workTime) =>{
-                //         console.log(workTime)
-                //         for(let i = 0; i <= 23; i++){
+                i = 0; i <= workdayArr.length doesn't work because there'll be numbers that are never reached; e.g. a timeblock of 8PM to
+                4AM has a length of 9, meaning the stopping point would be 10. Being that 8PM evaluates to 20, that's around 10 whole
+                timeblocks which cannot be color coded by the loop.
+                
+                i = 0; i <= 23 has worked very close to intended behavior so far, but the main problem is having to run another loop to
+                have an extra layer of compairison for the day-change that would take place between a 8PM to 4AM timeblock. The problem
+                with the extra loop seems to be that it will qualify entries within a whole timeblock for certain color coding if an if
+                statement detects even one of the entries of passing its test.
+                
+                Within the if statements, something like workdayArr[i].id < time && workdayArr[i].date <= currentDate won't work because
+                of the reference to workdayArr[i]. Again, workdayArr only has a length of 9, so anything after workdayArr[9] would be 
+                undefined.*/
+                        // for(let i = 0; i <= 23; i++){
+                        // console.log(i)
+                        // console.log(workdayArr)
 
-                //                 if(workTime.id < time && workTime.date <= currentDate){
-                //                         $("#" + i).addClass("past");
+                        //         if(workdayArr[i].id < time && workdayArr[i].date <= currentDate){
+                        //                 $("#" + i).addClass("past");
 
-                //                 }else if(workTime.id === time && workTime.date === currentDate){
-                //                         $("#" + i).addClass("present");
+                        //         }else if(workdayArr[i].id === time){
+                        //                 $("#" + i).addClass("present");
 
-                //                 }else if(workTime.id > time || workTime.date > currentDate){
-                //                         $("#" + i).addClass("future");
-                //                 };
-                //         };
-                // });
+                        //         }else if(workdayArr[i].id > time || workdayArr[i].date > currentDate){
+                        //                 $("#" + i).addClass("future");
+                        //         };
+                        // };
+
+                        workdayArr.forEach((workTime) =>{
+                                // console.log(`inside forEach`, workTime.id, time)
+                                // for(let i = 0; i <= 23; i++){
+        
+                                        if(workTime.id < time && workTime.date <= currentDate){
+                                                workTime.class = 'past';
+        
+                                        }else if(workTime.id == time){
+                                                workTime.class = 'present';
+        
+                                        }else if(workTime.id > time || workTime.date > currentDate){
+                                                workTime.class = 'future';
+                                        };
+                                //};
+                                for(let i = 0; i <= 23; i++){
+                                        if($(`#` + i).id == workTime.id){
+                                                $(`#` + i).addClass(workTime.class)
+                                        }
+                                        console.log(`test`, $(`#` + i))
+                                }
+                                
+                        });
+                        
+                }
+                
+                
 
                 // for(let i = 0; i < workdayArr.length; i++){
 
@@ -206,7 +232,7 @@ let colorCode = function(start, stop, workdayArr){
                         
                 // }
                 console.log(`inside PM2AM`,workdayArr);
-        }//last possible case would be --if(start === stop)--, unsure how needed this is and making a note of it here/now.
+        //last possible case would be --if(start === stop)--, unsure how needed this is and making a note of it here/now.
         // for(let i = 0; i < workdayArr.length; i++){
 
         
