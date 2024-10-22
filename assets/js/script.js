@@ -5,23 +5,29 @@ let dayDisplay = document.querySelector("#currentDay");
 let getDate = new Date();
 dayDisplay.innerText = `Today is ${getDate}.`;
 let timeContainer = document.querySelector(".time-container");
-let lowerTime = Number($("#lower-time").val());
-let upperTime = Number($("#upper-time").val());
 let timeArr = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
 
+
+
 $("#time-submit").on("click", function(event){
-        // console.log(`hours`,time);
-        // console.log(`date`,timeTest)
-        // console.log(`date class`, getDate)
+        let lowerTime = Number($("#lower-time").val());
+        let upperTime = Number($("#upper-time").val());
+
         event.preventDefault();
+
         $("#save").removeClass("hide");
         let positionLower;
         let positionUpper;
         let portionArr = [];
-        // let timeBlockArr = [];
+
+        for(let i = 0; i <= 23; i++){
+                console.log(`lower & upper`, lowerTime, upperTime)
+                $(`#${i}`).remove();
+        };
         
         let lowerText = document.querySelector("#lower-time").selectedOptions[0].innerText;
         let upperText = document.querySelector("#upper-time").selectedOptions[0].innerText;
+
         for(let i = 0; i < timeArr.length; i++){
 
                 if(lowerText === timeArr[i]){
@@ -297,6 +303,9 @@ $(".text-area").on("click", function(){
         textInput.trigger("focus");
 });
 
+// $(`#save`).on(`click`, function(){
+
+// });
 // $(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
 
 // function saveLocal(event){
@@ -318,10 +327,11 @@ $(".text-area").on("click", function(){
 
 /*TODO:
 Add ability for user to select/edit the time-frame to be displayed as their workday
-        -if user selects different time-block, need to override previously generated time-block
         -need to test if we can save the state of the app, rather than individual time-blocks(if
         user selects a time-frame, page should load with that time-frame. if user enters text into
-        time-blocks then app should load those saved time-blocks)
+        time-blocks then app should load those saved time-blocks. Also, user would want the saved state of the app to load-in updated to
+        current time of day, unsure if this is an issue right now, but making note as it'd otherwise be more efficient to always generate
+        a new time-block)
 
 Make time-related color coding dependent on a setInterval function of 10-15min, so the color of 
 various tasks are updated as appropriate every 10-20min
