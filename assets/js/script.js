@@ -8,11 +8,20 @@ let timeContainer = document.querySelector(".time-container");
 let timeArr = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
 
 let workdaySheet = JSON.parse(localStorage.getItem("workdayShift")) || [];
-let proxySheet = [];
+let proxy = [];
 console.log(workdaySheet);
 
+function clearTimeBlock(){
+
+        for(let i = 0; i <= 23; i++){
+                // console.log(`lower & upper`, lowerTime, upperTime)
+                $(`#${i}`).remove();
+        };
+
+};
+
 $("#time-submit").on("click", function(event){
-        let lowerTime = Number($("#lower-time").val());
+        
         // let upperTime = Number($("#upper-time").val());
 
         event.preventDefault();
@@ -22,10 +31,7 @@ $("#time-submit").on("click", function(event){
         let positionUpper;
         let portionArr = [];
 
-        for(let i = 0; i <= 23; i++){
-                // console.log(`lower & upper`, lowerTime, upperTime)
-                $(`#${i}`).remove();
-        };
+        clearTimeBlock();
         
         let lowerText = document.querySelector("#lower-time").selectedOptions[0].innerText;
         let upperText = document.querySelector("#upper-time").selectedOptions[0].innerText;
@@ -52,33 +58,37 @@ $("#time-submit").on("click", function(event){
         };
         console.log(`portionArr`,portionArr);
         
-        generateWorkday(portionArr, lowerTime);
+        generateWorkday(portionArr);
 });
 
-function generateWorkday(workdayArr, startTime){
-        
+function generateWorkday(workdayArr){
+        clearTimeBlock();
+        let lowerTime = Number($("#lower-time").val());
+        proxy = [];
 
         workdayArr.forEach((portion) =>{
+                
                 let div = document.createElement("div");
                 let textarea = document.createElement("textarea");
                 // let button = document.createElement("button");
                 let dateProp = currentDate;
                 div.textContent = portion;
                 div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
-                div.id = startTime - 1;
+                div.id = lowerTime - 1;
                 
                 if(div.id > 23){
                         div.id = div.id - 24;
                         dateProp++;
                 };
 
-                let timeBlockObj = {
-                        id: div.id,
-                        date: dateProp,
-                        timeBlock: portion
-                };
+                // let timeBlockObj = {
+                //         id: div.id,
+                //         date: dateProp,
+                //         timeBlock: portion
+                // };
+                let timeBlock = portion;
                 div.title = dateProp;
-                startTime++;
+                lowerTime++;
                 
                 if(div.id < time && div.title <= currentDate){
                         div.classList.add("past");
@@ -95,7 +105,7 @@ function generateWorkday(workdayArr, startTime){
                 textarea.classList.add("text-area", "text-center", "w-75");
                 // div.append(button);
                 // button.classList.add("float-right", "saveBtn", "oi", "oi-file");
-                proxySheet.push(timeBlockObj);
+                proxy.push(timeBlock);
         });
 };
 
@@ -112,8 +122,9 @@ around with to trigger a console.log, then we'll know we're effectivly triggerin
 // });
 
 $(`#save`).on(`click`, function(){
+        // localStorage.removeItem("workdayShift");
         workdaySheet = [];
-        workdaySheet = proxySheet;
+        workdaySheet = proxy;
 
         console.log(workdaySheet);
         // console.log($(`.time-container`)[0].children);
@@ -121,9 +132,12 @@ $(`#save`).on(`click`, function(){
         localStorage.setItem(`workdayShift`, JSON.stringify(workdaySheet));
 });
 
-// $(`#load`).on(`click`, function(){
+$(`#load`).on(`click`, function(){
 
-// });
+        clearTimeBlock();
+
+        generateWorkday(workdaySheet);
+});
 // $(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
 
 // function saveLocal(event){
