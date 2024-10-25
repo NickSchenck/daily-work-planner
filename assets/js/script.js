@@ -62,7 +62,13 @@ $("#time-submit").on("click", function(event){
 });
 
 function generateWorkday(workdayArr){
+
         clearTimeBlock();
+
+        /*lowerTime is why generation of time-blocks isn't resetting id values on activation of load functionality; it evaluates to the
+        value of the start-time user input, meaning the id's would generate from that point, rather than the saved time-block's
+        starting point
+        Maybe we could save the value associated with the availiable times in our html file?*/
         let lowerTime = Number($("#lower-time").val());
         proxy = [];
 
