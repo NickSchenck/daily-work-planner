@@ -22,6 +22,7 @@ function clearTimeBlock(){
 
 $("#time-submit").on("click", function(event){
         
+        let lowerTime = Number($("#lower-time").val());
         // let upperTime = Number($("#upper-time").val());
 
         event.preventDefault();
@@ -30,6 +31,11 @@ $("#time-submit").on("click", function(event){
         let positionLower;
         let positionUpper;
         let portionArr = [];
+        // let timeBlockObj = {
+        //         id: document.querySelector("#lower-time").selectedOptions[0].value - 1,
+        //         date: dateProp,
+        //         timeBlock: portion
+        // };
 
         clearTimeBlock();
         
@@ -56,23 +62,31 @@ $("#time-submit").on("click", function(event){
         }else{
                 portionArr = timeArr.slice(positionLower, (positionUpper + 1));
         };
+        console.log(`test`, document.querySelector("#lower-time").length)
         console.log(`portionArr`,portionArr);
         
-        generateWorkday(portionArr);
+        generateWorkday(portionArr, lowerTime);
 });
 
-function generateWorkday(workdayArr){
+function generateWorkday(workdayArr, lowerTime){
 
         clearTimeBlock();
 
+        
         /*lowerTime is why generation of time-blocks isn't resetting id values on activation of load functionality; it evaluates to the
         value of the start-time user input, meaning the id's would generate from that point, rather than the saved time-block's
         starting point
-        Maybe we could save the value associated with the availiable times in our html file?*/
-        let lowerTime = Number($("#lower-time").val());
+        Maybe we could save the value associated with the availiable times in our html file?
+        this is good code below that does properly load a saved workday, however it relies on lowerTime's value, which will cause regular
+        workday generation to base itself off of the saved workday. I now need a way to distinguish between generateWorkday being called
+        by onclick page generation and onload page generation.*/
+        
+        
+        
         proxy = [];
 
         workdayArr.forEach((portion) =>{
+                console.log(lowerTime);
                 
                 let div = document.createElement("div");
                 let textarea = document.createElement("textarea");
@@ -87,11 +101,6 @@ function generateWorkday(workdayArr){
                         dateProp++;
                 };
 
-                // let timeBlockObj = {
-                //         id: div.id,
-                //         date: dateProp,
-                //         timeBlock: portion
-                // };
                 let timeBlock = portion;
                 div.title = dateProp;
                 lowerTime++;
@@ -140,9 +149,17 @@ $(`#save`).on(`click`, function(){
 
 $(`#load`).on(`click`, function(){
 
-        clearTimeBlock();
+        // clearTimeBlock();
+        let lowerTime;
+        for(let i = 0; i < document.querySelector("#lower-time").length; i++){
+                
+                if(workdaySheet[0] === document.querySelector("#lower-time")[i].innerText){
+                        lowerTime = document.querySelector("#lower-time")[i].value;
+                };
 
-        generateWorkday(workdaySheet);
+        };
+
+        generateWorkday(workdaySheet, lowerTime);
 });
 // $(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
 
@@ -177,7 +194,8 @@ various tasks are updated as appropriate every 10-20min
         AM generation working intuitively but will also serve to make set-up and usage of a setInterval function easier also
 
 Make textarea more visible/intuitive to interact with and add tasks to
-        -Make previously saved text remain visible upon user clicking textarea containing it
+        -Make previously saved text remain visible upon user clicking textarea containing it; this piece of code will be useful for
+        obtaining the text-value of a textarea element, console.log(document.getElementById("19").children[0].value) 
 
 Provide a general description of app and details of usage(eg. how to save a timeblock, how to add
 text to a textarea- also aligns with making textarea more intuitive)
