@@ -1,5 +1,4 @@
 let time = moment().hours();
-// let time = 23;
 let currentDate = moment().date();
 let dayDisplay = document.querySelector("#currentDay"); 
 let getDate = new Date();
@@ -14,28 +13,22 @@ console.log(workdaySheet);
 function clearTimeBlock(){
 
         for(let i = 0; i <= 23; i++){
-                // console.log(`lower & upper`, lowerTime, upperTime)
                 $(`#${i}`).remove();
         };
 
 };
 
 $("#time-submit").on("click", function(event){
-        
+        let workdayObjCont = [];
         let lowerTime = Number($("#lower-time").val());
-        // let upperTime = Number($("#upper-time").val());
 
         event.preventDefault();
 
         $("#save").removeClass("hide");
+
         let positionLower;
         let positionUpper;
         let portionArr = [];
-        // let timeBlockObj = {
-        //         id: document.querySelector("#lower-time").selectedOptions[0].value - 1,
-        //         date: dateProp,
-        //         timeBlock: portion
-        // };
 
         clearTimeBlock();
         
@@ -46,13 +39,12 @@ $("#time-submit").on("click", function(event){
 
                 if(lowerText === timeArr[i]){
                         positionLower = i;
-                        // console.log('lower', positionLower);
                 };
 
                 if(upperText === timeArr[i]){
                         positionUpper = i;
-                        // console.log('upper', positionUpper);
                 };
+
         };
 
         if(positionLower > positionUpper){
@@ -62,48 +54,48 @@ $("#time-submit").on("click", function(event){
         }else{
                 portionArr = timeArr.slice(positionLower, (positionUpper + 1));
         };
-        console.log(`test`, document.querySelector("#lower-time").length)
-        console.log(`portionArr`,portionArr);
-        
-        generateWorkday(portionArr, lowerTime);
-});
 
-function generateWorkday(workdayArr, lowerTime){
-
-        clearTimeBlock();
-
-        
-        /*lowerTime is why generation of time-blocks isn't resetting id values on activation of load functionality; it evaluates to the
-        value of the start-time user input, meaning the id's would generate from that point, rather than the saved time-block's
-        starting point
-        Maybe we could save the value associated with the availiable times in our html file?
-        this is good code below that does properly load a saved workday, however it relies on lowerTime's value, which will cause regular
-        workday generation to base itself off of the saved workday. I now need a way to distinguish between generateWorkday being called
-        by onclick page generation and onload page generation.*/
-        
-        
-        
-        proxy = [];
-
-        workdayArr.forEach((portion) =>{
-                console.log(lowerTime);
-                
-                let div = document.createElement("div");
-                let textarea = document.createElement("textarea");
-                // let button = document.createElement("button");
+        portionArr.forEach((portion) => {
                 let dateProp = currentDate;
-                div.textContent = portion;
-                div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
-                div.id = lowerTime - 1;
+
+                let timeBlock = {
+                        id: lowerTime - 1,
+                        timeBlock: portion,
+                        date: null,
+                        blockText: null
+                };
                 
-                if(div.id > 23){
-                        div.id = div.id - 24;
+                if(timeBlock.id > 23){
+                        timeBlock.id = timeBlock.id - 24;
                         dateProp++;
                 };
 
-                let timeBlock = portion;
-                div.title = dateProp;
+                timeBlock.date = dateProp;
                 lowerTime++;
+                workdayObjCont.push(timeBlock);
+        });
+
+        generateWorkday(workdayObjCont);
+});
+
+function generateWorkday(workdayObjArr){
+        $("#save").removeClass("hide");
+
+        clearTimeBlock();
+
+        proxy = [];
+
+        workdayObjArr.forEach((portion) =>{
+                let div = document.createElement("div");
+                let textarea = document.createElement("textarea");
+                div.textContent = portion.timeBlock;
+                div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
+                div.id = portion.id;
+                div.title = portion.date;
+
+                if(portion.blockText){
+                        textarea.innerText = portion.blockText;
+                };
                 
                 if(div.id < time && div.title <= currentDate){
                         div.classList.add("past");
@@ -115,93 +107,83 @@ function generateWorkday(workdayArr, lowerTime){
                         div.classList.add("future");
                 
                 };
+
                 timeContainer.append(div);
                 div.append(textarea);
                 textarea.classList.add("text-area", "text-center", "w-75");
-                // div.append(button);
-                // button.classList.add("float-right", "saveBtn", "oi", "oi-file");
-                proxy.push(timeBlock);
+                proxy.push(portion);
         });
+
 };
 
-/*This function does not currently affect save functionality. It allows the user to affect the textarea elements inside time-blocks.
-!!!!!!!!!!!!!This function seeems to have been doing nothing!!!!!!!! Can still click and enter text within the textarea's, need to mess
-around with to trigger a console.log, then we'll know we're effectivly triggering a response from interaction.*/
-// $(".text-area").on("click", function(){
-//         console.log(text, textInput)
-//         let text = $(this).text().trim();
-//         let textInput = $("<textarea>").val(text).addClass("w-75");
-//         this.text() = text;
-//         $(this).innerText.replaceWith(textInput);
-//         textInput.trigger("focus");
+// workdayArr.forEach((portion) =>{
+                
+                
+//         let div = document.createElement("div");
+//         let textarea = document.createElement("textarea");
+//         // let button = document.createElement("button");
+//         let dateProp = currentDate;
+//         div.textContent = portion;
+//         div.classList.add("m-1", "border-top", "border-bottom", "border-dark");
+//         div.id = lowerTime - 1;
+        
+//         if(div.id > 23){
+//                 div.id = div.id - 24;
+//                 dateProp++;
+//         };
+
+//         let timeBlock = portion;
+//         div.title = dateProp;
+//         lowerTime++;
+        
+//         if(div.id < time && div.title <= currentDate){
+//                 div.classList.add("past");
+                
+//         }else if(div.id == time){
+//                 div.classList.add("present");
+                
+//         }else if(div.id > time || div.title > currentDate){
+//                 div.classList.add("future");
+        
+//         };
+//         timeContainer.append(div);
+//         div.append(textarea);
+//         textarea.classList.add("text-area", "text-center", "w-75");
+//         // div.append(button);
+//         // button.classList.add("float-right", "saveBtn", "oi", "oi-file");
+//         proxy.push(timeBlock);
 // });
 
 $(`#save`).on(`click`, function(){
-        // localStorage.removeItem("workdayShift");
         workdaySheet = [];
-        workdaySheet = proxy;
 
-        console.log(workdaySheet);
-        // console.log($(`.time-container`)[0].children);
-        
+        proxy.forEach((portion) => {
+                
+                if(document.getElementById(`${portion.id}`).children[0].value){
+                        portion.blockText = document.getElementById(`${portion.id}`).children[0].value;
+                };
+                
+        });
+
+        workdaySheet = proxy;
         localStorage.setItem(`workdayShift`, JSON.stringify(workdaySheet));
 });
 
 $(`#load`).on(`click`, function(){
-
-        // clearTimeBlock();
-        let lowerTime;
-        for(let i = 0; i < document.querySelector("#lower-time").length; i++){
-                
-                if(workdaySheet[0] === document.querySelector("#lower-time")[i].innerText){
-                        lowerTime = document.querySelector("#lower-time")[i].value;
-                };
-
-        };
-
-        generateWorkday(workdaySheet, lowerTime);
+        generateWorkday(workdaySheet);
 });
-// $(".saveBtn").on("click", saveLocal) //this line targets the save button on a click, to run the function saveLocal
-
-// function saveLocal(event){
-//     let textValue = $(event.target).siblings()[0].value    //lines 31-36 determine what is saved to localstorage, with timeKey being the timeblock and textValue being the textarea's content
-//     let timeKey = $(event.target).parent()[0].id
-//     localStorage.setItem(timeKey, textValue);
-// };
-
-// function renderStorage(){
-
-//         for(let i = 8; i <= 17; i++){
-//                 // console.log(localStorage.getItem(i))                                    //lines 38-44 allow us to load items from localstorage onto their appropriate timeblocks
-//                 $("#" + i).children(".text-area")[0].value = localStorage.getItem(i);
-//                 // console.log($("#" + i).children())
-//         };
-// };
-//       //lines 46 and 47 simply call functions which the user would need to be loaded upon page load.
-// renderStorage();
 
 /*TODO:
-Add ability for user to select/edit the time-frame to be displayed as their workday
-        -need to test if we can save the state of the app, rather than individual time-blocks(if
-        user selects a time-frame, page should load with that time-frame. if user enters text into
-        time-blocks then app should load those saved time-blocks. Also, user would want the saved state of the app to load-in updated to
-        current time of day, unsure if this is an issue right now, but making note as it'd otherwise be more efficient to always generate
-        a new time-block)
-
 Make time-related color coding dependent on a setInterval function of 10-15min, so the color of 
 various tasks are updated as appropriate every 10-20min
         -I believe we'll need to refactor some stuff so that an object contains a date key:value pair, this will mostly be to get PM to
         AM generation working intuitively but will also serve to make set-up and usage of a setInterval function easier also
-
-Make textarea more visible/intuitive to interact with and add tasks to
-        -Make previously saved text remain visible upon user clicking textarea containing it; this piece of code will be useful for
-        obtaining the text-value of a textarea element, console.log(document.getElementById("19").children[0].value) 
 
 Provide a general description of app and details of usage(eg. how to save a timeblock, how to add
 text to a textarea- also aligns with making textarea more intuitive)
         -Might change how date/time is displayed at top of app
 
 Changes to some CSS
-        -should add boarder-radius to divs, make them match/line-up better with save buttons
+        -Make textarea more intuitive for user to click
         -figure if we keep the m-1 bootstrap class, or more manually affect margins
 */
