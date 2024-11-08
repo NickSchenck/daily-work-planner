@@ -18,6 +18,11 @@ function clearTimeBlock(){
 
 };
 
+setInterval(function(){
+        dayDisplay.innerText = `Today is ${getDate}.`;
+        generateWorkday(workdaySheet);
+}, /*600000*/10000);
+
 $("#time-submit").on("click", function(event){
         let workdayObjCont = [];
         let lowerTime = Number($("#lower-time").val());
